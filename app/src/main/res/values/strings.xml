@@ -9,4 +9,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="Map">Map</string>
     <string name="Info">Info</string>
+    <string name="InfoApp">Informatie ...</string>
+    <string name="TxtInfoApp">Hier komt informatie over de app en het gebruik hiervan</string>
 </resources>

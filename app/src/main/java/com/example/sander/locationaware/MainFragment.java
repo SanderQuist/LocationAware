@@ -2,6 +2,8 @@ package com.example.sander.locationaware;
 
 
 import android.Manifest;
+import android.app.ActionBar;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -14,6 +16,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,19 +47,47 @@ import static android.support.v4.content.ContextCompat.getSystemService;
 
 public class MainFragment extends android.support.v4.app.Fragment  {
 
-    TextView tekst;
+    TextView textname;
+    TextView textinfo;
 
 
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        shouldDisplayHomeUp();
+//    }
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
 
-        tekst = v.findViewById(R.id.textView);
+
+
+        textname = v.findViewById(R.id.txt_name_id);
+        textname.setText(R.string.InfoApp);
+
+        textinfo = v.findViewById(R.id.txt_info_id);
+        textinfo.setText(R.string.TxtInfoApp);
+
+
+
+//        this.getView().setOnKeyListener( new View.OnKeyListener()
+//        {
+//            @Override
+//            public boolean onKey( View v, int keyCode, KeyEvent event )
+//            {
+//                if( keyCode == KeyEvent.KEYCODE_BACK )
+//                {
+//                    Intent intent = new Intent(this, MapsActivity.class);
+//                    startActivity(intent);
+//
+//                    return true;
+//                }
+//                return false;
+//            }
+//        } );
 
         return v;
     }
-
 
 
 }

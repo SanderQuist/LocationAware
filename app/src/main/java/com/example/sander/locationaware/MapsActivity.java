@@ -9,7 +9,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -40,6 +42,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+
         dl = (DrawerLayout)findViewById(R.id.dl);
         ab = new ActionBarDrawerToggle(this, dl, R.string.OpenAB, R.string.CloseAB);
         ab.setDrawerIndicatorEnabled(true);
@@ -59,6 +62,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             }
         });
+
+
+
+
     }
     @Override
     public void onBackPressed() {
@@ -78,13 +85,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            }
+        } else { }
+        googleMap.setMyLocationEnabled(true);
         LatLng kladde = new LatLng(51.564998,   4.266931);
         googleMap.addMarker(new MarkerOptions().position(kladde).title(" Marker Kladde"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(kladde));
-//        LatLng kladde = new LatLng(51.591431,  4.778150);
-//        googleMap.setMyLocationEnabled(true);
-//        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
           googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kladde, 16));
 //        googleMap.setMinZoomPreference(10);
 //        googleMap.setMaxZoomPreference(22);
@@ -98,14 +113,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Fragment fragment = null;
 
         switch(id){
-            case R.id.Maps:
-                Intent intent = new Intent(this, MapsActivity.class);
-                startActivity(intent);
-
-                break;
             case R.id.info:
                 fragment = new MainFragment();
                 displaySelectedFragment(fragment);
+
                 break;
 
         }
@@ -119,5 +130,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameId,fragment);
         fragmentTransaction.commit();
+    }
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    System.out.println(" denied access by user");
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
     }
 }

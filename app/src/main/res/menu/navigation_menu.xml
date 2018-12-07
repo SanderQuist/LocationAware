@@ -4,11 +4,7 @@
 
 
     <group android:checkableBehavior="single">
-        <item
-            android:id= "@+id/Maps"
-            android:title="@string/Map">
-            //android:icon= "">
-        </item>
+
         <item
             android:id= "@+id/info"
             android:title="@string/Info">
