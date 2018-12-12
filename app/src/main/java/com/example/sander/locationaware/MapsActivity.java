@@ -112,7 +112,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
           googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
               @Override
               public boolean onMarkerClick(Marker marker) {
-                  if (marker.getTitle().equals("marker 2")){
+                  if (marker.getTitle().equals("Marker Kladde")){
                       new DetailedFragment().show(getSupportFragmentManager(), "detailed_fragment");
                   }
 
@@ -180,7 +180,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     public void addMarker(final GoogleMap googleMap){
-        mConditionRef = mDatabase.child("LocationMarker");
+        mConditionRef = mDatabase.child("Marker");
         mConditionRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -188,7 +188,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                double markerY = (double) dataSnapshot.child("y").getValue();
                LocationMarker marker = new LocationMarker(markerX, markerY);
                LatLng kladde = new LatLng(marker.getX(), marker.getY());
-               googleMap.addMarker(new MarkerOptions().position(kladde).title("LocationMarker Kladde"));
+               googleMap.addMarker(new MarkerOptions().position(kladde).title("Marker Kladde"));
                googleMap.moveCamera(CameraUpdateFactory.newLatLng(kladde));
                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kladde, 16));
             }
