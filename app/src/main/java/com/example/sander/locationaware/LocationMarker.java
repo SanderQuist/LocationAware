@@ -1,10 +1,10 @@
 package com.example.sander.locationaware;
 
-public class Marker {
+public class LocationMarker {
     private double x;
     private double y;
 
-    public Marker(double x, double y){
+    public LocationMarker(double x, double y){
         this.x = x;
         this.y = y;
     }

@@ -11,4 +11,5 @@
     <string name="Info">Info</string>
     <string name="InfoApp">Informatie ...</string>
     <string name="TxtInfoApp">Hier komt informatie over de app en het gebruik hiervan</string>
+    <string name="Back">Back</string>
 </resources>

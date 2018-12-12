@@ -10,6 +10,11 @@
             android:title="@string/Info">
             //android:icon= "">
         </item>
+        <item
+            android:id= "@+id/back"
+            android:title="@string/Back">
+            //android:icon= "">
+        </item>
 
 
     </group>

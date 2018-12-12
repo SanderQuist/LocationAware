@@ -3,13 +3,11 @@ package com.example.sander.locationaware;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -23,8 +21,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,7 +38,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle ab;
     private DatabaseReference mDatabase;
     private DatabaseReference mConditionRef;
-    private Marker marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +50,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
-
-
         dl = (DrawerLayout)findViewById(R.id.dl);
         ab = new ActionBarDrawerToggle(this, dl, R.string.OpenAB, R.string.CloseAB);
         ab.setDrawerIndicatorEnabled(true);
 
         dl.addDrawerListener(ab);
         ab.syncState();
+
+
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final NavigationView nav_view = (NavigationView) findViewById(R.id.nav_view);
@@ -76,17 +74,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
-
-
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.dl);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        } else
+            this.recreate();
             super.onBackPressed();
-        }
     }
     public boolean onOptionsItemSelected(MenuItem item){
         return ab.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
@@ -111,6 +109,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
+          googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+              @Override
+              public boolean onMarkerClick(Marker marker) {
+                  if (marker.getTitle().equals("marker 2")){
+                      new DetailedFragment().show(getSupportFragmentManager(), "detailed_fragment");
+                  }
+
+
+                  return false;
+              }
+          });
+
+
+//        Polyline line = googleMap.addPolyline(new PolylineOptions()
+//                .add(kladde, kladde1)
+//                .width(5)
+//                .color(Color.RED));
+
+
+
 //        googleMap.setMinZoomPreference(10);
 //        googleMap.setMaxZoomPreference(22);
 //
@@ -121,13 +139,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean selectedItem(@NonNull MenuItem item){
         int id = item.getItemId();
         Fragment fragment = null;
-
         switch(id){
             case R.id.info:
-                fragment = new MainFragment();
+                fragment = new HelpFragment();
                 displaySelectedFragment(fragment);
-
                 break;
+            case R.id.back:
+                Intent i = new Intent(this, MapsActivity.class);
+                startActivity(i);
+                finish();
 
         }
 
@@ -138,8 +158,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void displaySelectedFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frameId,fragment);
+        fragmentTransaction.replace(R.id.frameId,fragment).addToBackStack(null);
         fragmentTransaction.commit();
+
     }
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -159,15 +180,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     public void addMarker(final GoogleMap googleMap){
-        mConditionRef = mDatabase.child("Marker");
+        mConditionRef = mDatabase.child("LocationMarker");
         mConditionRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                double markerX = (double) dataSnapshot.child("x").getValue();
                double markerY = (double) dataSnapshot.child("y").getValue();
-               Marker marker = new Marker(markerX, markerY);
+               LocationMarker marker = new LocationMarker(markerX, markerY);
                LatLng kladde = new LatLng(marker.getX(), marker.getY());
-               googleMap.addMarker(new MarkerOptions().position(kladde).title(" Marker Kladde"));
+               googleMap.addMarker(new MarkerOptions().position(kladde).title("LocationMarker Kladde"));
                googleMap.moveCamera(CameraUpdateFactory.newLatLng(kladde));
                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kladde, 16));
             }
