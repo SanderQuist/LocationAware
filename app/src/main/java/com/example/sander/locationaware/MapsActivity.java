@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -38,6 +39,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle ab;
     private DatabaseReference mDatabase;
     private DatabaseReference mConditionRef;
+    private ArrayList<LocationMarker> markers;
+    private int markerCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.oldmap);
         mapFragment.getMapAsync(this);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        markers = new ArrayList<LocationMarker>();
 
 
-        dl = (DrawerLayout)findViewById(R.id.dl);
+        dl = (DrawerLayout) findViewById(R.id.dl);
         ab = new ActionBarDrawerToggle(this, dl, R.string.OpenAB, R.string.CloseAB);
         ab.setDrawerIndicatorEnabled(true);
 
@@ -58,13 +62,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ab.syncState();
 
 
-
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final NavigationView nav_view = (NavigationView) findViewById(R.id.nav_view);
-        nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+        nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item){
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(true);
                 dl.closeDrawers();
                 selectedItem(item);
@@ -84,11 +86,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             drawer.closeDrawer(GravityCompat.START);
         } else
             this.recreate();
-            super.onBackPressed();
+        super.onBackPressed();
     }
-    public boolean onOptionsItemSelected(MenuItem item){
+
+    public boolean onOptionsItemSelected(MenuItem item) {
         return ab.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
+
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;
     }
@@ -103,30 +107,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
-        } else { }
+        } else {
+        }
         googleMap.setMyLocationEnabled(true);
-        addMarker(googleMap);
+        addMarker(googleMap, 0);
+        addMarker(googleMap, 1);
 
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
-          googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-              @Override
-              public boolean onMarkerClick(Marker marker) {
-                  if (marker.getTitle().equals("Marker Kladde")){
-                      new DetailedFragment().show(getSupportFragmentManager(), "detailed_fragment");
-                  }
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (marker.getTitle().equals("Marker Kladde")) {
+                    new DetailedFragment().show(getSupportFragmentManager(), "detailed_fragment");
+                }
 
 
-                  return false;
-              }
-          });
+                return false;
+            }
+        });
 
 
 //        Polyline line = googleMap.addPolyline(new PolylineOptions()
 //                .add(kladde, kladde1)
 //                .width(5)
 //                .color(Color.RED));
-
 
 
 //        googleMap.setMinZoomPreference(10);
@@ -136,10 +141,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        settings.setZoomControlsEnabled(true);
     }
 
-    public boolean selectedItem(@NonNull MenuItem item){
+    public boolean selectedItem(@NonNull MenuItem item) {
         int id = item.getItemId();
         Fragment fragment = null;
-        switch(id){
+        switch (id) {
             case R.id.info:
                 fragment = new HelpFragment();
                 displaySelectedFragment(fragment);
@@ -158,10 +163,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void displaySelectedFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frameId,fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.frameId, fragment).addToBackStack(null);
         fragmentTransaction.commit();
 
     }
+
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
@@ -179,24 +185,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // permissions this app might request.
         }
     }
-    public void addMarker(final GoogleMap googleMap){
-        mConditionRef = mDatabase.child("Marker");
-        mConditionRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               double markerX = (double) dataSnapshot.child("x").getValue();
-               double markerY = (double) dataSnapshot.child("y").getValue();
-               LocationMarker marker = new LocationMarker(markerX, markerY);
-               LatLng kladde = new LatLng(marker.getX(), marker.getY());
-               googleMap.addMarker(new MarkerOptions().position(kladde).title("Marker Kladde"));
-               googleMap.moveCamera(CameraUpdateFactory.newLatLng(kladde));
-               googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kladde, 16));
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+    public void addMarker(final GoogleMap googleMap, int child) {
+            mConditionRef = mDatabase.child(String.valueOf(child));
+            markerCount = child;
+            mConditionRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String markerName = (String) dataSnapshot.child("Name").getValue();
+                    String markerDesc = (String) dataSnapshot.child("Description").getValue();
+                    long markerDate = (long) dataSnapshot.child("Date").getValue();
+                    double markerX = (double) dataSnapshot.child("x").getValue();
+                    double markerY = (double) dataSnapshot.child("y").getValue();
+                    LocationMarker marker = new LocationMarker(markerName, markerDesc, markerDate, markerX, markerY);
+                    markers.add(marker);
 
-            }
-        });
+                    LatLng markerOnMap = new LatLng(markers.get(markerCount).getX(), markers.get(markerCount).getY());
+                    googleMap.addMarker(new MarkerOptions().position(markerOnMap).title(markers.get(markerCount).getName()));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(markerOnMap));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerOnMap, 16));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
     }
 }
