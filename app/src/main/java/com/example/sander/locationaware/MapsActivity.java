@@ -3,6 +3,7 @@ package com.example.sander.locationaware;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -21,9 +22,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +45,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DatabaseReference mConditionRef;
     private ArrayList<LocationMarker> markers;
     private int markerCount;
+    LocationMarker locationMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,14 +118,38 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         addMarker(googleMap, 0);
         addMarker(googleMap, 1);
 
+
+        System.out.println("Markers: "+markers.size());
+
+
+
+
+
+
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (marker.getTitle().equals("Marker Kladde")) {
-                    new DetailedFragment().show(getSupportFragmentManager(), "detailed_fragment");
+                if (marker.getTitle().equals("Kladde")) {
+                    DetailedFragment f = new DetailedFragment();
+                    Bundle markerinfo = new Bundle();
+                    markerinfo.putString("title",markers.get(0).getName());
+                    markerinfo.putString("description", markers.get(0).getDescription());
+                    markerinfo.putLong("date", markers.get(0).getDate());
+                   f.setArguments(markerinfo);
+                   f.show(getSupportFragmentManager(), "detailed_fragment");
                 }
+                if (marker.getTitle().equals("Huis")){
+                    DetailedFragment f = new DetailedFragment();
+                    Bundle markerinfo = new Bundle();
+                    markerinfo.putString("title",markers.get(1).getName());
+                    markerinfo.putString("description", markers.get(1).getDescription());
+                    markerinfo.putLong("date", markers.get(1).getDate());
+                    f.setArguments(markerinfo);
+                    f.show(getSupportFragmentManager(), "detailed_fragment");
+                }
+
 
 
                 return false;
@@ -128,18 +157,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
-//        Polyline line = googleMap.addPolyline(new PolylineOptions()
-//                .add(kladde, kladde1)
-//                .width(5)
-//                .color(Color.RED));
 
 
-//        googleMap.setMinZoomPreference(10);
-//        googleMap.setMaxZoomPreference(22);
-//
-//        UiSettings settings = googleMap.getUiSettings();
-//        settings.setZoomControlsEnabled(true);
+        googleMap.setMinZoomPreference(10);
+        googleMap.setMaxZoomPreference(22);
+
+        UiSettings settings = googleMap.getUiSettings();
+        settings.setZoomControlsEnabled(true);
     }
+
 
     public boolean selectedItem(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -189,7 +215,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void addMarker(final GoogleMap googleMap, int child) {
             mConditionRef = mDatabase.child(String.valueOf(child));
             markerCount = child;
-            mConditionRef.addValueEventListener(new ValueEventListener() {
+            mConditionRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String markerName = (String) dataSnapshot.child("Name").getValue();
@@ -197,13 +223,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     long markerDate = (long) dataSnapshot.child("Date").getValue();
                     double markerX = (double) dataSnapshot.child("x").getValue();
                     double markerY = (double) dataSnapshot.child("y").getValue();
-                    LocationMarker marker = new LocationMarker(markerName, markerDesc, markerDate, markerX, markerY);
-                    markers.add(marker);
+                    locationMarker = new LocationMarker(markerName, markerDesc, markerDate, markerX, markerY);
+                    markers.add(locationMarker);
+                    System.out.println("markers after loop " + markers.size());
 
-                    LatLng markerOnMap = new LatLng(markers.get(markerCount).getX(), markers.get(markerCount).getY());
-                    googleMap.addMarker(new MarkerOptions().position(markerOnMap).title(markers.get(markerCount).getName()));
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(markerOnMap));
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerOnMap, 16));
+
+                    for (int i = 0; i < markers.size(); i++) {
+
+                        LatLng markerOnMap = new LatLng(markers.get(i).getX(), markers.get(i).getY());
+                        googleMap.addMarker(new MarkerOptions().position(markerOnMap).title(markers.get(i).getName()));
+                        System.out.println("hoe vaak loop ik hier " + i);
+
+
+
+
+                        if (i == 0) {
+
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerOnMap, 16));
+                        }else{
+                            Polyline line = googleMap.addPolyline(new PolylineOptions()
+                                    .add(new LatLng(markers.get(0).getX(), markers.get(0).getY()), new LatLng(markers.get(1).getX(), markers.get(1).getY()))
+                                    .width(5)
+                                    .color(Color.RED));
+                        }
+
+                    }
+
                 }
 
                 @Override
@@ -211,5 +256,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
             });
+
+
     }
 }

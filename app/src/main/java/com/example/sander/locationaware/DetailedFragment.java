@@ -15,8 +15,7 @@ public class DetailedFragment extends DialogFragment {
 
     TextView poiName;
     TextView poiBuildDate;
-    TextView poiCreator;
-    ImageView poiImage;
+
     TextView poiDescription;
 
     public static DetailedFragment newInstance(){
@@ -42,12 +41,16 @@ public class DetailedFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detailed, container, false);
 
-        poiName = view.findViewById(R.id.DetailedFragmentPOITitle);
-        poiBuildDate = view.findViewById(R.id.DetailedFragmentConstructionInfo);
-        poiCreator = view.findViewById(R.id.DetailedFragmentCreatorInfo);
-        poiImage = view.findViewById(R.id.DetailedFragmentImage);
-        poiDescription = view.findViewById(R.id.DetailedFragmentDescription);
+        Bundle info = getArguments();
 
+        poiName = view.findViewById(R.id.DetailedFragmentPOITitle);
+        poiName.setText(info.getString("title", ""));
+        poiBuildDate = view.findViewById(R.id.DetailedFragmentConstructionInfo);
+        poiBuildDate.setText(String.valueOf(info.getLong("date", 1L)));
+
+
+        poiDescription = view.findViewById(R.id.DetailedFragmentDescription);
+        poiName.setText(info.getString("description", ""));
         return view;
     }
 }
