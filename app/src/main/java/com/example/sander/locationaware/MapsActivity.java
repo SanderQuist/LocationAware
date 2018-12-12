@@ -16,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,11 +26,21 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private DrawerLayout dl;
     private ActionBarDrawerToggle ab;
+    private DatabaseReference mDatabase;
+    private DatabaseReference mConditionRef;
+    private Marker marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +50,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.oldmap);
         mapFragment.getMapAsync(this);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
 
@@ -95,12 +107,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         } else { }
         googleMap.setMyLocationEnabled(true);
-        LatLng kladde = new LatLng(51.564998,   4.266931);
-        googleMap.addMarker(new MarkerOptions().position(kladde).title(" Marker Kladde"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(kladde));
+        addMarker(googleMap);
 
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-          googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kladde, 16));
+
 //        googleMap.setMinZoomPreference(10);
 //        googleMap.setMaxZoomPreference(22);
 //
@@ -147,5 +157,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // other 'case' lines to check for other
             // permissions this app might request.
         }
+    }
+    public void addMarker(final GoogleMap googleMap){
+        mConditionRef = mDatabase.child("Marker");
+        mConditionRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+               double markerX = (double) dataSnapshot.child("x").getValue();
+               double markerY = (double) dataSnapshot.child("y").getValue();
+               Marker marker = new Marker(markerX, markerY);
+               LatLng kladde = new LatLng(marker.getX(), marker.getY());
+               googleMap.addMarker(new MarkerOptions().position(kladde).title(" Marker Kladde"));
+               googleMap.moveCamera(CameraUpdateFactory.newLatLng(kladde));
+               googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kladde, 16));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
