@@ -1,6 +1,10 @@
 package com.example.sander.locationaware;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Application;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,8 +39,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+
+import static java.security.AccessController.getContext;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -44,6 +53,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DatabaseReference mDatabase;
     private DatabaseReference mConditionRef;
     private ArrayList<LocationMarker> markers;
+    HelpFragment helpFragment = new HelpFragment();
     private int markerCount;
     LocationMarker locationMarker;
 
@@ -86,12 +96,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.dl);
-
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else
-            this.recreate();
-        super.onBackPressed();
+         }
+         if (helpFragment != null && helpFragment.isVisible()){
+             this.recreate();
+             super.onBackPressed();
+         }
+         else if(MapsActivity.this.equals(this)){
+                 new AlertDialog.Builder(this)
+                         .setIcon(android.R.drawable.ic_dialog_alert)
+                         .setTitle("Closing Activity")
+                         .setMessage("Are you sure you want to exit?")
+                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                             @Override
+                             public void onClick(DialogInterface dialogInterface, int i) {
+                                 finish();
+                             }
+                         })
+                         .setNegativeButton("No", null)
+                         .show();
+
+             }
+             else{
+        this.recreate();
+            super.onBackPressed();
+         }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -115,13 +145,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
         }
         googleMap.setMyLocationEnabled(true);
-        addMarker(googleMap, 0);
-        addMarker(googleMap, 1);
 
+        for (int i = 0; i < 13; i++){
+            addMarker(googleMap, i);
 
-        System.out.println("Markers: "+markers.size());
-
-
+        }
 
 
 
@@ -131,27 +159,52 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (marker.getTitle().equals("Kladde")) {
-                    DetailedFragment f = new DetailedFragment();
-                    Bundle markerinfo = new Bundle();
-                    markerinfo.putString("title",markers.get(0).getName());
-                    markerinfo.putString("description", markers.get(0).getDescription());
-                    markerinfo.putLong("date", markers.get(0).getDate());
-                   f.setArguments(markerinfo);
-                   f.show(getSupportFragmentManager(), "detailed_fragment");
+                String title = marker.getTitle();
+                System.out.println("title"+ title);
+                switch (title){
+                    case "Stadskantoor Breda":
+                        getMarkerInfo(12);
+                        break;
+                    case "Bibliotheek centrum":
+                        getMarkerInfo(11);
+                        break;
+                    case "Openbaar toilet Valkenberg":
+                        getMarkerInfo(10);
+                        break;
+                    case "Station Breda":
+                        getMarkerInfo(9);
+                        break;
+                    case "Haven Breda":
+                        getMarkerInfo(8);
+                        break;
+                    case "Potkanstraat":
+                        getMarkerInfo(7);
+                        break;
+                    case "Haven Breda 2":
+                        getMarkerInfo(6);
+                        break;
+                    case "Nieuwe Prinsenkade":
+                        getMarkerInfo(5);
+                        break;
+                    case "Kasteelplein":
+                        getMarkerInfo(4);
+                        break;
+                    case "Doctor Jan Ingen Houszplein":
+                        getMarkerInfo(3);
+                        break;
+                    case "Bushalte centrum":
+                        getMarkerInfo(2);
+                        break;
+                    case "Avans Lovendijkstraat & Hogeschoollaan":
+                        getMarkerInfo(1);
+                        break;
+
+                    case "McDonalds Breda":
+                        getMarkerInfo(0);
+                        break;
+
+
                 }
-                if (marker.getTitle().equals("Huis")){
-                    DetailedFragment f = new DetailedFragment();
-                    Bundle markerinfo = new Bundle();
-                    markerinfo.putString("title",markers.get(1).getName());
-                    markerinfo.putString("description", markers.get(1).getDescription());
-                    markerinfo.putLong("date", markers.get(1).getDate());
-                    f.setArguments(markerinfo);
-                    f.show(getSupportFragmentManager(), "detailed_fragment");
-                }
-
-
-
                 return false;
             }
         });
@@ -166,14 +219,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         settings.setZoomControlsEnabled(true);
     }
 
+    public void getMarkerInfo(int i){
+        DetailedFragment f = new DetailedFragment();
+        Bundle markerinfo = new Bundle();
+        markerinfo.putString("title", markers.get(i).getName());
+        System.out.println("title" +  markers.get(i).getName());
+        markerinfo.putString("description", markers.get(i).getDescription());
+        markerinfo.putString("price", markers.get(i).getPrice());
+        f.setArguments(markerinfo);
+        f.show(getSupportFragmentManager(), "detailed_fragment");
+    }
 
     public boolean selectedItem(@NonNull MenuItem item) {
         int id = item.getItemId();
         Fragment fragment = null;
         switch (id) {
             case R.id.info:
-                fragment = new HelpFragment();
-                displaySelectedFragment(fragment);
+                if (!helpFragment.isVisible()) {
+                    fragment = helpFragment;
+                    displaySelectedFragment(fragment);
+                }
                 break;
             case R.id.back:
                 Intent i = new Intent(this, MapsActivity.class);
@@ -220,10 +285,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String markerName = (String) dataSnapshot.child("Name").getValue();
                     String markerDesc = (String) dataSnapshot.child("Description").getValue();
-                    long markerDate = (long) dataSnapshot.child("Date").getValue();
+                    String markerPrice = (String ) dataSnapshot.child("Price").getValue();
                     double markerX = (double) dataSnapshot.child("x").getValue();
                     double markerY = (double) dataSnapshot.child("y").getValue();
-                    locationMarker = new LocationMarker(markerName, markerDesc, markerDate, markerX, markerY);
+                    locationMarker = new LocationMarker(markerName, markerDesc, markerPrice, markerX, markerY);
                     markers.add(locationMarker);
                     System.out.println("markers after loop " + markers.size());
 
@@ -240,16 +305,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (i == 0) {
 
                             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerOnMap, 16));
-                        }else{
-                            Polyline line = googleMap.addPolyline(new PolylineOptions()
-                                    .add(new LatLng(markers.get(0).getX(), markers.get(0).getY()), new LatLng(markers.get(1).getX(), markers.get(1).getY()))
-                                    .width(5)
-                                    .color(Color.RED));
                         }
 
                     }
 
                 }
+
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {

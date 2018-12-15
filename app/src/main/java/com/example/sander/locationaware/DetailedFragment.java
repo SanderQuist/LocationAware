@@ -8,14 +8,12 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DetailedFragment extends DialogFragment {
 
     TextView poiName;
-    TextView poiBuildDate;
-
+    TextView poiPrice;
     TextView poiDescription;
 
     public static DetailedFragment newInstance(){
@@ -45,12 +43,12 @@ public class DetailedFragment extends DialogFragment {
 
         poiName = view.findViewById(R.id.DetailedFragmentPOITitle);
         poiName.setText(info.getString("title", ""));
-        poiBuildDate = view.findViewById(R.id.DetailedFragmentConstructionInfo);
-        poiBuildDate.setText(String.valueOf(info.getLong("date", 1L)));
+        poiPrice = view.findViewById(R.id.DetailedFragmentPrice);
+        poiPrice.setText(String.valueOf(info.getString("price", "")));
 
 
         poiDescription = view.findViewById(R.id.DetailedFragmentDescription);
-        poiName.setText(info.getString("description", ""));
+        poiDescription.setText(info.getString("description", ""));
         return view;
     }
 }

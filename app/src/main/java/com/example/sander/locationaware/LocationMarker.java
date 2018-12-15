@@ -3,14 +3,14 @@ package com.example.sander.locationaware;
 public class LocationMarker {
     private String name;
     private String description;
-    private long date;
+    private String  price;
     private double x;
     private double y;
 
-    public LocationMarker(String name, String description, long date, double x, double y){
+    public LocationMarker(String name, String description, String  price, double x, double y){
         this.name = name;
         this.description = description;
-        this.date = date;
+        this.price = price;
         this.x = x;
         this.y = y;
     }
@@ -31,12 +31,12 @@ public class LocationMarker {
         this.description = description;
     }
 
-    public long getDate() {
-        return date;
+    public String getPrice() {
+        return price;
     }
 
-    public void setDate(long date) {
-        this.date = date;
+    public void setPrice(String  price) {
+        this.price = price;
     }
 
     public double getX() {
