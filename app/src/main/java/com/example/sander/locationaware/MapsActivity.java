@@ -1,17 +1,12 @@
 package com.example.sander.locationaware;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,7 +21,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -38,8 +32,6 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -48,13 +40,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.security.AccessController.getContext;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, android.location.LocationListener {
 
@@ -126,15 +112,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
          else if(MapsActivity.this.equals(this)){
                  new AlertDialog.Builder(this)
                          .setIcon(android.R.drawable.ic_dialog_alert)
-                         .setTitle("Closing Activity")
-                         .setMessage("Are you sure you want to exit?")
-                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                         .setTitle(R.string.closeapp)
+                         .setMessage(R.string.closeappdec)
+                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                              @Override
                              public void onClick(DialogInterface dialogInterface, int i) {
                                  finish();
                              }
                          })
-                         .setNegativeButton("No", null)
+                         .setNegativeButton(R.string.no, null)
                          .show();
 
              }

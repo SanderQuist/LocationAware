@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">LocationAware</string>
-    <string name="CloseAB">CLose</string>
+    <string name="CloseAB">Close</string>
     <string name="Name">Name</string>
     <string name="OpenAB">Open</string>
     <string name="APPNAME">Bathroom Break</string>
@@ -13,4 +13,8 @@
     <string name="TxtInfoApp">Bathroom Break is een app gemaakt voor de stressvolle situaties. Zodra je op de map kijkt ga je naar je eigen locatie. Door de kaart te verslepen zie je wcs bij jou in de buurt. Druk op een van de markers om een route hier naar toe te maken. </string>
     <string name="Back">Back</string>
     <string name="gotothemarker">Ga naar marker!</string>
+    <string name="closeapp">App sluiten?</string>
+    <string name="closeappdec">Weet u zeker dat u Bathroom Break wilt sluiten?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
 </resources>

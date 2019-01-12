@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LocationAware</string>
+    <string name="CloseAB">Close</string>
+    <string name="Name">Name</string>
+    <string name="OpenAB">Open</string>
+    <string name="APPNAME">Bathroom Break</string>
+    <string name="hello_blank_fragment">Hello blank</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="Map">Map</string>
+    <string name="Info">Info</string>
+    <string name="InfoApp">Information...</string>
+    <string name="TxtInfoApp">Bathroom Break is an app made for stressful situations. As soon as you look at the map you see your own location. By moving the map you can see the nearest toilet from your location. By pressing one of the markers you can see the route to this toilet.</string>
+    <string name="Back">Back</string>
+    <string name="gotothemarker">Go to this marker.</string>
+    <string name="closeapp">Close app?</string>
+    <string name="closeappdec">Are you sure you want to close Bathroom Break?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>
