@@ -285,10 +285,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String markerName = (String) dataSnapshot.child("Name").getValue();
                     String markerDesc = (String) dataSnapshot.child("Description").getValue();
+                    String markerEnDesc = (String) dataSnapshot.child("EnDescription").getValue();
                     String markerPrice = (String ) dataSnapshot.child("Price").getValue();
                     double markerX = (double) dataSnapshot.child("x").getValue();
                     double markerY = (double) dataSnapshot.child("y").getValue();
-                    locationMarker = new LocationMarker(markerName, markerDesc, markerPrice, markerX, markerY);
+                    locationMarker = new LocationMarker(markerName, markerDesc,markerEnDesc, markerPrice, markerX, markerY);
                     markers.add(locationMarker);
                     System.out.println("markers after loop " + markers.size());
 
