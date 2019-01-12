@@ -30,7 +30,7 @@ public class HelpFragment extends android.support.v4.app.Fragment {
 
 
         textname = v.findViewById(R.id.txt_name_id);
-        textname.setText(R.string.InfoApp);
+        textname.setText(R.string.APPNAME);
 
         textinfo = v.findViewById(R.id.txt_info_id);
         textinfo.setText(R.string.TxtInfoApp);

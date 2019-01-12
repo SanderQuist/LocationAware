@@ -3,13 +3,14 @@
     <string name="CloseAB">CLose</string>
     <string name="Name">Name</string>
     <string name="OpenAB">Open</string>
+    <string name="APPNAME">Bathroom Break</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
     <string name="Map">Map</string>
     <string name="Info">Info</string>
     <string name="InfoApp">Informatie ...</string>
-    <string name="TxtInfoApp">Hier komt informatie over de app en het gebruik hiervan</string>
+    <string name="TxtInfoApp">Bathroom Break is een app gemaakt voor de stressvolle situaties. Zodra je op de map kijkt ga je naar je eigen locatie. Door de kaart te verslepen zie je wcs bij jou in de buurt. Druk op een van de markers om een route hier naar toe te maken. </string>
     <string name="Back">Back</string>
+    <string name="gotothemarker">Ga naar marker!</string>
 </resources>

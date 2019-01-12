@@ -1,6 +1,7 @@
 package com.example.sander.locationaware;
 
 import android.app.Dialog;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,7 +9,10 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.Task;
 
 import java.util.Locale;
 
@@ -17,6 +21,7 @@ public class DetailedFragment extends DialogFragment {
     TextView poiName;
     TextView poiPrice;
     TextView poiDescription;
+    Button poiGoTO;
 
     public static DetailedFragment newInstance(){
         DetailedFragment detailedFragment = new DetailedFragment();
@@ -57,6 +62,16 @@ public class DetailedFragment extends DialogFragment {
             poiDescription.setText(info.getString("endescription", ""));
         }
 
+        poiDescription.setText(info.getString("description", ""));
+
+        poiGoTO = view.findViewById(R.id.buttongoto_id);
+        poiGoTO.setText(R.string.gotothemarker);
+        poiGoTO.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               
+            }
+        });
         return view;
     }
 }
