@@ -225,6 +225,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markerinfo.putString("title", markers.get(i).getName());
         System.out.println("title" +  markers.get(i).getName());
         markerinfo.putString("description", markers.get(i).getDescription());
+        markerinfo.putString("endescription", markers.get(i).getEnDescription());
         markerinfo.putString("price", markers.get(i).getPrice());
         f.setArguments(markerinfo);
         f.show(getSupportFragmentManager(), "detailed_fragment");

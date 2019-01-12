@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 public class DetailedFragment extends DialogFragment {
 
     TextView poiName;
@@ -48,7 +50,13 @@ public class DetailedFragment extends DialogFragment {
 
 
         poiDescription = view.findViewById(R.id.DetailedFragmentDescription);
-        poiDescription.setText(info.getString("description", ""));
+        if(Locale.getDefault().getDisplayLanguage() == "nl_NL"){
+            poiDescription.setText(info.getString("description", ""));
+        }
+        else{
+            poiDescription.setText(info.getString("endescription", ""));
+        }
+
         return view;
     }
 }
