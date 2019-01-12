@@ -4,10 +4,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -23,6 +28,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,6 +40,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,20 +51,32 @@ import com.google.firebase.database.ValueEventListener;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.security.AccessController.getContext;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, android.location.LocationListener {
 
+    private static final String TAG = "this";
     private DrawerLayout dl;
     private ActionBarDrawerToggle ab;
     private DatabaseReference mDatabase;
     private DatabaseReference mConditionRef;
     private ArrayList<LocationMarker> markers;
     HelpFragment helpFragment = new HelpFragment();
+    private boolean locationPermissionGranted;
+    private FusedLocationProviderClient mFuseLocationProviderClient;
+    GoogleMap googleMap;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private int markerCount;
+    private Location previousLocation;
+    private static final float DEFAULT_ZOOM = 15;
+
     LocationMarker locationMarker;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +110,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             }
         });
-
 
     }
 
@@ -134,23 +154,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            }
-        } else {
-        }
-        googleMap.setMyLocationEnabled(true);
+       getLocationPermission();
 
+        this.googleMap = googleMap;
         for (int i = 0; i < 13; i++){
             addMarker(googleMap, i);
 
         }
-
+        googleMap.setMyLocationEnabled(true);
+        getDeviceLocation();
 
 
 
@@ -214,6 +226,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         googleMap.setMinZoomPreference(10);
         googleMap.setMaxZoomPreference(22);
+        zoomToCurrentLocation();
 
         UiSettings settings = googleMap.getUiSettings();
         settings.setZoomControlsEnabled(true);
@@ -262,12 +275,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 1: {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
 
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true;
 
-                } else {
+                                  } else {
                     System.out.println(" denied access by user");
                 }
                 return;
@@ -276,8 +290,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // other 'case' lines to check for other
             // permissions this app might request.
         }
+        updateLocationUI();
     }
-
+    private void getLocationPermission() {
+        Log.d(TAG, "getLocationPermission: ");
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true;
+            updateLocationUI();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
     public void addMarker(final GoogleMap googleMap, int child) {
             mConditionRef = mDatabase.child(String.valueOf(child));
             markerCount = child;
@@ -306,7 +333,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         if (i == 0) {
 
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerOnMap, 16));
+                            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerOnMap, 16));
                         }
 
                     }
@@ -322,4 +349,125 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+    private void zoomToCurrentLocation(){
+        LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        Location location = null;
+
+        try {
+            location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+
+        }catch (SecurityException | NullPointerException e){
+            Log.e(TAG, "zoomToCurrentLocation: ", e);
+        }
+
+        if (location != null)
+        {
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16));
+
+        }
+    }
+
+    private void updateLocationUI() {
+        Log.d(TAG, "updateLocationUI: map == null: " + (googleMap == null));
+        Log.d(TAG, "updateLocationUI: locationPermissionGranted: " + locationPermissionGranted);
+        if (googleMap == null) {
+            return;
+        }
+        try {
+            if (locationPermissionGranted) {
+                googleMap.setMyLocationEnabled(true);
+                googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                googleMap.getUiSettings().setCompassEnabled(true);
+
+                zoomToCurrentLocation();
+
+            } else {
+                googleMap.setMyLocationEnabled(false);
+                googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+            }
+        } catch (SecurityException e)  {
+            Log.e(TAG, "updateLocationUI: ", e);
+        }
+    }
+
+    private void getDeviceLocation(){
+        Log.d(TAG, "getDeviceLocation:");
+
+        mFuseLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+
+        try {
+            if(locationPermissionGranted) {
+                Task location = mFuseLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            try {
+                                Log.d(TAG, "onComplete: ");
+                                Location currentLocation = (Location) task.getResult();
+                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                            }
+                            catch(Exception e){
+                                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getApplicationContext());
+                                dlgAlert.setMessage("Please turn on GPS before you continue");
+                                dlgAlert.setTitle("GPS Error");
+                                dlgAlert.setPositiveButton("OK", null);
+                                dlgAlert.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        finish();
+
+                                    }
+                                });
+                                dlgAlert.setCancelable(true);
+                                //dlgAlert.create().show();
+                            }
+                        } else {
+                            Log.d(TAG, "current location");
+                        }
+                    }
+                });
+            }
+        }catch (SecurityException e){
+            Log.e(TAG, "SecurityException");
+
+        }
+        catch (Exception ex){
+            Log.e(TAG, "getDeviceLocation: "+ ex.toString());
+
+        }
+    }
+
+    private void moveCamera(LatLng latLng, float zoom){
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
+    }
+
+
 }

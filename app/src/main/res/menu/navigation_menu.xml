@@ -12,7 +12,7 @@
         </item>
         <item
             android:id= "@+id/back"
-            android:title="@string/Back">
+            android:title="@string/Map">
             //android:icon= "">
         </item>
 
