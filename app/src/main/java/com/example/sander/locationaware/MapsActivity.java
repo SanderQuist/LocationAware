@@ -21,6 +21,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -76,12 +78,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markers = new ArrayList<LocationMarker>();
 
 
+
         dl = (DrawerLayout) findViewById(R.id.dl);
         ab = new ActionBarDrawerToggle(this, dl, R.string.OpenAB, R.string.CloseAB);
         ab.setDrawerIndicatorEnabled(true);
 
         dl.addDrawerListener(ab);
         ab.syncState();
+
+
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -148,7 +153,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
         googleMap.setMyLocationEnabled(true);
-        getDeviceLocation();
 
 
 
@@ -212,10 +216,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         googleMap.setMinZoomPreference(10);
         googleMap.setMaxZoomPreference(22);
-        zoomToCurrentLocation();
-
         UiSettings settings = googleMap.getUiSettings();
         settings.setZoomControlsEnabled(true);
+        getDeviceLocation();
+        zoomToCurrentLocation();
+
+
     }
 
     public void getMarkerInfo(int i){
@@ -371,6 +377,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }catch (SecurityException | NullPointerException e){
             Log.e(TAG, "zoomToCurrentLocation: ", e);
+            AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getApplicationContext());
+            dlgAlert.setMessage(R.string.nogpsexplanation);
+            dlgAlert.setTitle(R.string.noGPS);
+            dlgAlert.setPositiveButton(R.string.yes, null);
+            dlgAlert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            });
+            dlgAlert.setCancelable(true);
+            dlgAlert.create().show();
         }
 
         if (location != null)
@@ -420,20 +438,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 Location currentLocation = (Location) task.getResult();
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                             }
-                            catch(Exception e){
-                                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getApplicationContext());
-                                dlgAlert.setMessage("Please turn on GPS before you continue");
-                                dlgAlert.setTitle("GPS Error");
-                                dlgAlert.setPositiveButton("OK", null);
-                                dlgAlert.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-
-                                    public void onClick(DialogInterface arg0, int arg1) {
-                                        finish();
-
-                                    }
-                                });
-                                dlgAlert.setCancelable(true);
-                                //dlgAlert.create().show();
+                            catch(Exception e) {
+                                Toast.makeText(getApplication(), R.string.noGPS, Toast.LENGTH_LONG).show();
+                               
                             }
                         } else {
                             Log.d(TAG, "current location");

@@ -13,6 +13,12 @@
     <string name="TxtInfoApp">Bathroom Break is een app gemaakt voor de stressvolle situaties. Zodra je op de map kijkt ga je naar je eigen locatie. Door de kaart te verslepen zie je wcs bij jou in de buurt. Druk op een van de markers om een route hier naar toe te maken. </string>
     <string name="Back">Back</string>
     <string name="gotothemarker">Ga naar marker!</string>
+    <string name="noGPS">Geen GPS!</string>
+    <string name="nogpsexplanation">Geen Gps gevonden, schakel GPS in.</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="cancel">Annuleren</string>
+    <string name="oke">Oke</string>
     <string name="closeapp">App sluiten?</string>
     <string name="closeappdec">Weet u zeker dat u Bathroom Break wilt sluiten?</string>
     <string name="yes">Ja</string>
