@@ -1,7 +1,9 @@
 package com.example.sander.locationaware;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
@@ -10,6 +12,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +86,7 @@ public class DetailedFragment extends DialogFragment {
         poiGoTO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 ((MapsActivity)getActivity()).goHere();
                 getActivity().getSupportFragmentManager().beginTransaction().remove(DetailedFragment.this).commit();
             }

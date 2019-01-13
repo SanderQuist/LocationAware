@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -61,7 +63,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location previousLocation;
     private static final float DEFAULT_ZOOM = 15;
     private int selectedMarker;
-
     LocationMarker locationMarker;
 
 
@@ -475,11 +476,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             waypoints.add(end);
             LatLng startPoint = new LatLng(start.getLatitude(), start.getLongitude());
             LatLng endPoint = new LatLng(end.getLatitude(), end.getLongitude());
-
             new GetPathFromLocation(startPoint, endPoint, waypoints,
                     polyLine -> {
-                        googleMap.addPolyline(polyLine);
+                       googleMap.addPolyline(polyLine);
+
                     }).execute();
+            googleMap.clear();
+            for (int i = 0; i < 13; i++){
+                addMarker(googleMap, i);
+
+            }
+
         }
         else{
             Toast.makeText(this, R.string.oeps, Toast.LENGTH_LONG).show();
