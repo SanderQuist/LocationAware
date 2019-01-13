@@ -468,7 +468,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if(location != null){
-            //Hier moet het fragment sluiten komen.
             ToGoAndFrom start = new ToGoAndFrom(location.getLatitude(), location.getLongitude());
             ToGoAndFrom end = new ToGoAndFrom(markers.get(getSelectedMarker()).getX(), markers.get(getSelectedMarker()).getY());
             ArrayList<ToGoAndFrom> waypoints = new ArrayList<ToGoAndFrom>();

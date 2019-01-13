@@ -82,6 +82,7 @@ public class DetailedFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 ((MapsActivity)getActivity()).goHere();
+                getActivity().getSupportFragmentManager().beginTransaction().remove(DetailedFragment.this).commit();
             }
         });
         return view;
