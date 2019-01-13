@@ -21,4 +21,5 @@
     <string name="closeappdec">Weet u zeker dat u Bathroom Break wilt sluiten?</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
+    <string name="oeps">Er is iets foutgegaan, je locatie is niet beschikbaar!</string>
 </resources>

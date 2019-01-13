@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -21,9 +20,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.sander.locationaware.Directions.GetPathFromLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -55,11 +54,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     HelpFragment helpFragment = new HelpFragment();
     private boolean locationPermissionGranted;
     private FusedLocationProviderClient mFuseLocationProviderClient;
+    private LocationManager locationManager;
     GoogleMap googleMap;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private int markerCount;
     private Location previousLocation;
     private static final float DEFAULT_ZOOM = 15;
+    private int selectedMarker;
 
     LocationMarker locationMarker;
 
@@ -76,6 +77,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         markers = new ArrayList<LocationMarker>();
+        locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
 
 
@@ -90,7 +92,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        final NavigationView nav_view = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView nav_view = findViewById(R.id.nav_view);
         nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -106,7 +108,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.dl);
+        DrawerLayout drawer = findViewById(R.id.dl);
          if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
          }
@@ -166,43 +168,56 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 switch (title){
                     case "Stadskantoor Breda":
                         getMarkerInfo(12);
+                        setSelectedMarker(12);
                         break;
                     case "Bibliotheek centrum":
                         getMarkerInfo(11);
+                        setSelectedMarker(11);
                         break;
                     case "Openbaar toilet Valkenberg":
                         getMarkerInfo(10);
+                        setSelectedMarker(10);
                         break;
                     case "Station Breda":
                         getMarkerInfo(9);
+                        setSelectedMarker(9);
                         break;
                     case "Haven Breda":
                         getMarkerInfo(8);
+                        setSelectedMarker(8);
                         break;
                     case "Potkanstraat":
                         getMarkerInfo(7);
+                        setSelectedMarker(7);
                         break;
                     case "Haven Breda 2":
                         getMarkerInfo(6);
+                        setSelectedMarker(6);
                         break;
                     case "Nieuwe Prinsenkade":
                         getMarkerInfo(5);
+                        setSelectedMarker(5);
                         break;
                     case "Kasteelplein":
                         getMarkerInfo(4);
+                        setSelectedMarker(4);
                         break;
                     case "Doctor Jan Ingen Houszplein":
                         getMarkerInfo(3);
+                        setSelectedMarker(3);
                         break;
                     case "Bushalte centrum":
                         getMarkerInfo(2);
+                        setSelectedMarker(2);
                         break;
                     case "Avans Lovendijkstraat & Hogeschoollaan":
                         getMarkerInfo(1);
+                        setSelectedMarker(1);
                         break;
 
                     case "McDonalds Breda":
                         getMarkerInfo(0);
+                        setSelectedMarker(0);
                         break;
 
 
@@ -253,7 +268,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.dl);
+        DrawerLayout drawer = findViewById(R.id.dl);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -368,12 +383,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void zoomToCurrentLocation(){
-        LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
         Location location = null;
 
         try {
-            location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         }catch (SecurityException | NullPointerException e){
             Log.e(TAG, "zoomToCurrentLocation: ", e);
@@ -462,5 +475,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
     }
 
+    public void goHere(){
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+        if(location != null){
+            //Hier moet het fragment sluiten komen.
+            ToGoAndFrom start = new ToGoAndFrom(location.getLatitude(), location.getLongitude());
+            ToGoAndFrom end = new ToGoAndFrom(markers.get(getSelectedMarker()).getX(), markers.get(getSelectedMarker()).getY());
+            ArrayList<ToGoAndFrom> waypoints = new ArrayList<ToGoAndFrom>();
+            waypoints.add(start);
+            waypoints.add(end);
+            LatLng startPoint = new LatLng(start.getLatitude(), start.getLongitude());
+            LatLng endPoint = new LatLng(end.getLatitude(), end.getLongitude());
+
+            new GetPathFromLocation(startPoint, endPoint, waypoints,
+                    polyLine -> {
+                        googleMap.addPolyline(polyLine);
+                    }).execute();
+        }
+        else{
+            Toast.makeText(this, R.string.oeps, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public int getSelectedMarker() {
+        return selectedMarker;
+    }
+
+    public void setSelectedMarker(int selectedMarker) {
+        this.selectedMarker = selectedMarker;
+    }
 }

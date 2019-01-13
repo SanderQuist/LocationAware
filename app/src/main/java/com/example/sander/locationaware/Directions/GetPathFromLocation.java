@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.sander.locationaware.ToGoAndFrom;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -24,18 +25,25 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
     private String API_KEY = "e0f07d4e-04da-4a4f-b805-79cf927180a6";
     private LatLng source, destination;
     private DirectionPointListener resultCallback;
+    private List<ToGoAndFrom> wayPoints;
 
-    public GetPathFromLocation(LatLng source, LatLng destination, DirectionPointListener resultCallback) {
+    public GetPathFromLocation(LatLng source, LatLng destination, List<ToGoAndFrom> wayPoints, DirectionPointListener resultCallback) {
         this.source = source;
         this.destination = destination;
         this.resultCallback = resultCallback;
+        this.wayPoints = wayPoints;
+
     }
 
-    public String getUrl(LatLng origin, LatLng dest) {
+    public String getUrl(LatLng origin, LatLng dest, List<ToGoAndFrom> wayPoints) {
 
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
         StringBuilder str_wayPoints = new StringBuilder("waypoints=optimize:true");
+        for(ToGoAndFrom toGoAndFrom : wayPoints)
+        {
+            str_wayPoints.append("|").append(toGoAndFrom.getLatitude()).append(",").append(toGoAndFrom.getLongitude());
+        }
         String mode = "mode=walking";
         String parameters = str_origin + "&" + str_dest + "&" + str_wayPoints + "&" + mode;
         //String output = "json";
@@ -55,7 +63,7 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
             InputStream inputStream = null;
             HttpURLConnection connection = null;
             try {
-                URL directionUrl = new URL(getUrl(source, destination));
+                URL directionUrl = new URL(getUrl(source, destination, wayPoints));
                 connection = (HttpURLConnection) directionUrl.openConnection();
                 connection.connect();
                 inputStream = connection.getInputStream();

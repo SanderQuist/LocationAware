@@ -17,4 +17,5 @@
     <string name="closeappdec">Are you sure you want to close Bathroom Break?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="oeps">Something went wrong, location is not available!</string>
 </resources>

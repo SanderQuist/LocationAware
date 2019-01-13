@@ -81,8 +81,7 @@ public class DetailedFragment extends DialogFragment {
         poiGoTO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
+                ((MapsActivity)getActivity()).goHere();
             }
         });
         return view;
