@@ -22,4 +22,5 @@
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
     <string name="oeps">Er is iets foutgegaan, je locatie is niet beschikbaar!</string>
+    <string name="click">Klik op de locatie knop rechts bovenin om naar je locatie te gaan.</string>
 </resources>

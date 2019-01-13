@@ -5,17 +5,17 @@
 
     <group android:checkableBehavior="single">
 
-        <item
-            android:id= "@+id/info"
-            android:title="@string/Info">
-            //android:icon= "">
-        </item>
+
         <item
             android:id= "@+id/back"
             android:title="@string/Map">
             //android:icon= "">
         </item>
-
+        <item
+            android:id= "@+id/info"
+            android:title="@string/Info">
+            //android:icon= "">
+        </item>
 
     </group>
 </menu>

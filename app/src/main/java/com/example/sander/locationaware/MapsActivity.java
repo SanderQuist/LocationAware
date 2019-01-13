@@ -89,17 +89,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ab.syncState();
 
 
-
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final NavigationView nav_view = findViewById(R.id.nav_view);
         nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
                 item.setChecked(true);
                 dl.closeDrawers();
                 selectedItem(item);
-
                 return true;
             }
         });
@@ -388,20 +386,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-        }catch (SecurityException | NullPointerException e){
-            Log.e(TAG, "zoomToCurrentLocation: ", e);
-            AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getApplicationContext());
-            dlgAlert.setMessage(R.string.nogpsexplanation);
-            dlgAlert.setTitle(R.string.noGPS);
-            dlgAlert.setPositiveButton(R.string.yes, null);
-            dlgAlert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    finish();
-                }
-            });
-            dlgAlert.setCancelable(true);
-            dlgAlert.create().show();
+        }catch (SecurityException | NullPointerException e) {
         }
 
         if (location != null)
@@ -452,9 +437,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                             }
                             catch(Exception e) {
-                                Toast.makeText(getApplication(), R.string.noGPS, Toast.LENGTH_LONG).show();
-                               
+                                for (int i = 0; i < 5; i++) {
+                                    Toast.makeText(getApplication(), R.string.noGPS, Toast.LENGTH_LONG).show();
+
+                                }
+                                Toast.makeText(getApplication(), R.string.click, Toast.LENGTH_LONG).show();
                             }
+
                         } else {
                             Log.d(TAG, "current location");
                         }

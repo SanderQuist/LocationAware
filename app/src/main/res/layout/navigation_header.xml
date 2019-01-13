@@ -29,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appname_id"
-        app:srcCompat="@drawable/toilet" />
+        app:srcCompat="@drawable/web_hi_res_512" />
 
     <TextView
         android:id="@+id/appname_id"
