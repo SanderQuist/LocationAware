@@ -21,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sander.locationaware.Directions.GetPathFromLocation;
@@ -42,6 +43,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 
@@ -64,7 +66,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final float DEFAULT_ZOOM = 15;
     private int selectedMarker;
     LocationMarker locationMarker;
-
+    TextView textdistance;
 
 
 
@@ -80,7 +82,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markers = new ArrayList<LocationMarker>();
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
-
+        textdistance = findViewById(R.id.distancetxt);
 
         dl = (DrawerLayout) findViewById(R.id.dl);
         ab = new ActionBarDrawerToggle(this, dl, R.string.OpenAB, R.string.CloseAB);
@@ -476,6 +478,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             waypoints.add(end);
             LatLng startPoint = new LatLng(start.getLatitude(), start.getLongitude());
             LatLng endPoint = new LatLng(end.getLatitude(), end.getLongitude());
+            getDistance(startPoint, endPoint);
             new GetPathFromLocation(startPoint, endPoint, waypoints,
                     polyLine -> {
                        googleMap.addPolyline(polyLine);
@@ -493,6 +496,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private int getDistance(LatLng startPoint, LatLng endPoint) {
+        int distance = (int)SphericalUtil.computeDistanceBetween(startPoint, endPoint);
+        System.out.println("dit is de afstand"+ distance);
+        textdistance.setText(distance + "m");
+        return distance;
+    }
     public int getSelectedMarker() {
         return selectedMarker;
     }

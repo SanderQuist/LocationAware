@@ -12,7 +12,9 @@
  <FrameLayout
      android:id="@+id/frameId"
      android:layout_width="match_parent"
-     android:layout_height="match_parent">
+     android:layout_height="match_parent"
+     >
+
 
   <fragment
       android:id="@+id/oldmap"
@@ -20,6 +22,15 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       tools:context=".MapsActivity" />
+
+  <TextView
+      android:id="@+id/distancetxt"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="start"
+      android:textColor="@color/black"
+      android:textSize="24sp" />
+
  </FrameLayout>
 
 
@@ -29,7 +40,9 @@ android:layout_width="wrap_content"
 android:layout_height="match_parent"
 android:layout_gravity="start"
 app:headerLayout="@layout/navigation_header"
-app:menu="@menu/navigation_menu"/>
+app:menu="@menu/navigation_menu">
+
+ </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
 
 
