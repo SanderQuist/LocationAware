@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 
@@ -31,6 +32,7 @@ public class DetailedFragment extends DialogFragment {
     TextView poiDescription;
     Button poiGoTO;
     Locale myLocale;
+    Switch favSwitch;
     private SharedPreferences pref;
     Bundle info;
     String key;
@@ -61,7 +63,7 @@ public class DetailedFragment extends DialogFragment {
         SharedPreferences.Editor editor = pref.edit();
 
         info = getArguments();
-
+        favSwitch = view.findViewById(R.id.switchId);
         poiName = view.findViewById(R.id.DetailedFragmentPOITitle);
         poiName.setText(info.getString("title", ""));
         poiPrice = view.findViewById(R.id.DetailedFragmentPrice);
@@ -95,23 +97,37 @@ public class DetailedFragment extends DialogFragment {
                 getActivity().getSupportFragmentManager().beginTransaction().remove(DetailedFragment.this).commit();
             }
         });
+
+
+        if (checkPreferences()){
+            favSwitch.setChecked(true);
+        }else{
+            favSwitch.setChecked(false);
+        }
+
+
+        favSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (favSwitch.isChecked()) {
+                    key = info.getString("title");
+                    editor.putBoolean(key, true);
+                    editor.commit();
+                }else{
+                    key = info.getString("title");
+                    editor.remove(key);
+                }
+            }
+        });
         return view;
     }
-    //OnClickListenerCode
-    /**
-     * key = info.getString("title");
-     * editor.putBoolean(key, true);
-     * editor.commit();
-     */
-    private void checkPreferences(){
+
+    private boolean checkPreferences(){
         key = info.getString("title");
         boolean fav = pref.getBoolean(key, false);
+        return fav;
     }
-    //Code for deleting preferences
-    /**
-     * key = info.getString("title");
-     * editor.remove(key);
-     */
+
 
 
 }

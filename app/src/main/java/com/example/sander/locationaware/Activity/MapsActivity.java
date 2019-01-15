@@ -120,6 +120,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
              this.recreate();
              super.onBackPressed();
          }
+
          else if(MapsActivity.this.equals(this)){
                  new AlertDialog.Builder(this)
                          .setIcon(android.R.drawable.ic_dialog_alert)
@@ -331,7 +332,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     locationMarker = new LocationMarker(markerName, markerDesc,markerEnDesc, markerPrice, markerX, markerY);
                     LatLng markerOnMap = new LatLng(locationMarker.getX(), locationMarker.getY());
                     googleMap.addMarker(new MarkerOptions().position(markerOnMap).title(locationMarker.getName()));
-
+                    markers.add(locationMarker);
                 }
 
 
