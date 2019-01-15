@@ -4,7 +4,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.sander.locationaware.ToGoAndFrom;
+import com.example.sander.locationaware.Models.ToGoAndFrom;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 

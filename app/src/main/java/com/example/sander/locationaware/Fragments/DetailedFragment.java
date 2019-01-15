@@ -1,10 +1,8 @@
-package com.example.sander.locationaware;
+package com.example.sander.locationaware.Fragments;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -14,9 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +19,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.example.sander.locationaware.Activity.MapsActivity;
+import com.example.sander.locationaware.R;
 
 import java.util.Locale;
 

@@ -1,4 +1,4 @@
-package com.example.sander.locationaware;
+package com.example.sander.locationaware.Models;
 
 public class LocationMarker {
     private String name;

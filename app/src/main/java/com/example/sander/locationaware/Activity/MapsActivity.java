@@ -1,4 +1,4 @@
-package com.example.sander.locationaware;
+package com.example.sander.locationaware.Activity;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +24,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sander.locationaware.Directions.GetPathFromLocation;
+import com.example.sander.locationaware.Fragments.DetailedFragment;
+import com.example.sander.locationaware.Fragments.HelpFragment;
+import com.example.sander.locationaware.Models.LocationMarker;
+import com.example.sander.locationaware.R;
+import com.example.sander.locationaware.Models.ToGoAndFrom;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,7 +39,6 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
