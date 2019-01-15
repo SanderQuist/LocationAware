@@ -3,7 +3,9 @@ package com.example.sander.locationaware;
 import android.app.AlertDialog;
 import android.app.Dialog;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
@@ -32,6 +34,9 @@ public class DetailedFragment extends DialogFragment {
     TextView poiDescription;
     Button poiGoTO;
     Locale myLocale;
+    private SharedPreferences pref;
+    Bundle info;
+    String key;
 
     public static DetailedFragment newInstance(){
         DetailedFragment detailedFragment = new DetailedFragment();
@@ -55,8 +60,10 @@ public class DetailedFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detailed, container, false);
+        pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
 
-        Bundle info = getArguments();
+        info = getArguments();
 
         poiName = view.findViewById(R.id.DetailedFragmentPOITitle);
         poiName.setText(info.getString("title", ""));
@@ -93,6 +100,21 @@ public class DetailedFragment extends DialogFragment {
         });
         return view;
     }
+    //OnClickListenerCode
+    /**
+     * key = info.getString("title");
+     * editor.putBoolean(key, true);
+     * editor.commit();
+     */
+    private void checkPreferences(){
+        key = info.getString("title");
+        boolean fav = pref.getBoolean(key, false);
+    }
+    //Code for deleting preferences
+    /**
+     * key = info.getString("title");
+     * editor.remove(key);
+     */
 
 
 }
