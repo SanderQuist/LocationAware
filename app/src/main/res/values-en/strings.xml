@@ -18,4 +18,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="oeps">Something went wrong, location is not available!</string>
+    <string name="yet">yet</string>
+    <string name="onyourway">On your way to the bathroom</string>
 </resources>

@@ -1,18 +1,24 @@
 package com.example.sander.locationaware.Activity;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -49,6 +55,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
+
+import static android.support.v4.app.NotificationCompat.DEFAULT_VIBRATE;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, android.location.LocationListener {
 
@@ -331,6 +339,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     locationMarker = new LocationMarker(markerName, markerDesc,markerEnDesc, markerPrice, markerX, markerY);
                     LatLng markerOnMap = new LatLng(locationMarker.getX(), locationMarker.getY());
                     googleMap.addMarker(new MarkerOptions().position(markerOnMap).title(locationMarker.getName()));
+                    markers.add(locationMarker);
 
                 }
 
@@ -476,6 +485,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
 
+            showNotification("Op weg naar de WC", "Nog: "  + getDistance(startPoint, endPoint) + "m");
+
         }
         else{
             Toast.makeText(this, R.string.oeps, Toast.LENGTH_LONG).show();
@@ -494,5 +505,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void setSelectedMarker(int selectedMarker) {
         this.selectedMarker = selectedMarker;
+    }
+
+    void showNotification(String title, String content) {
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default",
+                    "YOUR_CHANNEL_NAME",
+                    NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
+            mNotificationManager.createNotificationChannel(channel);
+
+        }
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
+                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
+                .setContentTitle(title) // title for notification
+                .setDefaults(Notification.DEFAULT_SOUND | DEFAULT_VIBRATE)
+                .setPriority(NotificationManager.IMPORTANCE_MAX)
+                .setBadgeIconType(R.drawable.web_hi_res_512)
+                .setContentText(content)// message for notification
+                .setAutoCancel(true); // clear notification after click
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        //intent.putParcelableArrayListExtra(ROUTELISTTAG, routes);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(pi);
+        mNotificationManager.notify(0, mBuilder.build());
     }
 }

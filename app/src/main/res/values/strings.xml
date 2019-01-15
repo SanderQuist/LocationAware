@@ -23,4 +23,6 @@
     <string name="no">Nee</string>
     <string name="oeps">Er is iets foutgegaan, je locatie is niet beschikbaar!</string>
     <string name="click">Klik op de locatie knop rechts bovenin om naar je locatie te gaan.</string>
+    <string name="onyourway">Op weg naar de WC</string>
+    <string name="yet">nog</string>
 </resources>
