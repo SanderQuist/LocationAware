@@ -326,25 +326,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     double markerX = (double) dataSnapshot.child("x").getValue();
                     double markerY = (double) dataSnapshot.child("y").getValue();
                     locationMarker = new LocationMarker(markerName, markerDesc,markerEnDesc, markerPrice, markerX, markerY);
-                    markers.add(locationMarker);
-                    System.out.println("markers after loop " + markers.size());
-
-
-                    for (int i = 0; i < markers.size(); i++) {
-
-                        LatLng markerOnMap = new LatLng(markers.get(i).getX(), markers.get(i).getY());
-                        googleMap.addMarker(new MarkerOptions().position(markerOnMap).title(markers.get(i).getName()));
-                        System.out.println("hoe vaak loop ik hier " + i);
-
-
-
-
-                        if (i == 0) {
-
-                            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerOnMap, 16));
-                        }
-
-                    }
+                    LatLng markerOnMap = new LatLng(locationMarker.getX(), locationMarker.getY());
+                    googleMap.addMarker(new MarkerOptions().position(markerOnMap).title(locationMarker.getName()));
 
                 }
 
