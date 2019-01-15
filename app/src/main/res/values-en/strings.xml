@@ -23,6 +23,6 @@
     <string name="cancel">Cancel</string>
     <string name="oke">Oke</string>
     <string name="click">Click on the location button in the top right corner to go to your current location.</string>
-    <string name="Save">Save</string>
+    <string name="Save">Visited</string>
     <string name="favorite">Favorits</string>
 </resources>
